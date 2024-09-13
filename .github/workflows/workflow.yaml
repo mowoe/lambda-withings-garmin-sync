@@ -23,6 +23,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Create ECR Repository if not exists
+        run: aws ecr describe-repositories --repository-names lambda-withings-garmin-sync || aws ecr create-repository --repository-name lambda-withings-garmin-sync
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
