@@ -10,8 +10,8 @@ import os
 
 from loguru import logger
 
-tokenstore = "~/.garminconnect"
-tokenstore_base64 = "~/.garminconnect_base64"
+tokenstore = "/tmp/.garminconnect"
+tokenstore_base64 = "/tmp/.garminconnect_base64"
 
 
 def get_mfa():
