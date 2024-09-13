@@ -43,7 +43,7 @@ def handler(event, context):
 
     token = withings_config["access_token"]
     refresh_token = withings_config["refresh_token"]
-    valid_until = withings_config["valid_until"]
+    valid_until = int(withings_config["valid_until"])
 
     if valid_until - 100 < int(time.time()):
         WITHINGS_CLIENT_ID = os.environ.get("WITHINGS_CLIENT_ID",0)
