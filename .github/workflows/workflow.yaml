@@ -51,49 +51,57 @@ jobs:
           cache-from: type=gha
           provenance: false
   
-#  apply-tofu:
-#    name: Apply Tofu Config
-#    needs: build
-#    defaults:
-#      run:
-#        working-directory: terraform
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: eu-central-1
-#      - uses: opentofu/setup-opentofu@v1
-#      - name: OpenTofu fmt
-#        id: fmt
-#        run: tofu fmt -check
-#        continue-on-error: true
-#
-#      - name: OpenTofu Init
-#        id: init
-#        run: tofu init
-#
-#      - name: OpenTofu Validate
-#        id: validate
-#        run: tofu validate -no-color
-#
-#      - name: OpenTofu Plan
-#        id: plan
-#        env:
-#          TF_VAR_numerai_secret: ${{ secrets.TF_VAR_numerai_secret }}
-#          TF_VAR_numerai_key: ${{ secrets.TF_VAR_numerai_key }}
-#          TF_VAR_comet_api_key: ${{ secrets.TF_VAR_comet_api_key }}
-#        run: tofu plan -no-color
-#        continue-on-error: true
-#      
-#      - name: OpenTofu Apply
-#        id: apply
-#        env:
-#          TF_VAR_numerai_secret: ${{ secrets.TF_VAR_numerai_secret }}
-#          TF_VAR_numerai_key: ${{ secrets.TF_VAR_numerai_key }}
-#          TF_VAR_comet_api_key: ${{ secrets.TF_VAR_comet_api_key }}
-#        run: tofu apply -no-color -auto-approve
-#
+  apply-tofu:
+    name: Apply Tofu Config
+    needs: build
+    defaults:
+      run:
+        working-directory: terraform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - uses: opentofu/setup-opentofu@v1
+      - name: OpenTofu fmt
+        id: fmt
+        run: tofu fmt -check
+        continue-on-error: true
+
+      - name: OpenTofu Init
+        id: init
+        run: tofu init
+
+      - name: OpenTofu Validate
+        id: validate
+        run: tofu validate -no-color
+
+      - name: OpenTofu Plan
+        id: plan
+        env:
+          TF_VAR_garmin_connect_email: ${{ secrets.TF_VAR_garmin_connect_email }}
+          TF_VAR_garmin_connect_password: ${{ secrets.TF_VAR_garmin_connect_password }}
+          TF_VAR_withings_access_token: ${{ secrets.TF_VAR_withings_access_token }}
+          TF_VAR_withings_refresh_token: ${{ secrets.TF_VAR_withings_refresh_token }}
+          TF_VAR_withings_token_valid_until: ${{ secrets.TF_VAR_withings_token_valid_until }}
+          TF_VAR_withings_client_id: ${{ secrets.TF_VAR_withings_client_id }}
+          TF_VAR_withings_secret: ${{ secrets.TF_VAR_withings_secret }}
+        run: tofu plan -no-color
+        continue-on-error: true
+      
+      - name: OpenTofu Apply
+        id: apply
+        env:
+          TF_VAR_garmin_connect_email: ${{ secrets.TF_VAR_garmin_connect_email }}
+          TF_VAR_garmin_connect_password: ${{ secrets.TF_VAR_garmin_connect_password }}
+          TF_VAR_withings_access_token: ${{ secrets.TF_VAR_withings_access_token }}
+          TF_VAR_withings_refresh_token: ${{ secrets.TF_VAR_withings_refresh_token }}
+          TF_VAR_withings_token_valid_until: ${{ secrets.TF_VAR_withings_token_valid_until }}
+          TF_VAR_withings_client_id: ${{ secrets.TF_VAR_withings_client_id }}
+          TF_VAR_withings_secret: ${{ secrets.TF_VAR_withings_secret }}
+        run: tofu apply -no-color -auto-approve
+
