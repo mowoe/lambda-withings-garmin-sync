@@ -56,7 +56,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: terraform
+        working-directory: tofu
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
