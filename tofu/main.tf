@@ -97,7 +97,6 @@ resource "aws_iam_role" "lambda_exec_role" {
 resource "aws_lambda_function" "withings_garmin_sync_function" {
   function_name = "withings_garmin_sync_function"
   role          = aws_iam_role.lambda_exec_role.arn
-  handler       = "lambda_function.lambda_handler"
   image_uri     = "${data.aws_ecr_repository.lambda_image_repo.repository_url}:${data.external.git-tag.result.sha}"
   timeout       = 900
   package_type  = "Image"
