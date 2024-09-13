@@ -84,8 +84,8 @@ resource "aws_iam_role" "lambda_exec_role" {
       Effect = "Allow",
       Principal = {
         Service = [
-            "lambda.amazonaws.com",
-            "scheduler.amazonaws.com",
+          "lambda.amazonaws.com",
+          "scheduler.amazonaws.com",
         ],
       },
     }],
