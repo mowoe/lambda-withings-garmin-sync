@@ -83,7 +83,10 @@ resource "aws_iam_role" "lambda_exec_role" {
       Action = "sts:AssumeRole",
       Effect = "Allow",
       Principal = {
-        Service = "lambda.amazonaws.com",
+        Service = [
+            "lambda.amazonaws.com",
+            "scheduler.amazonaws.com",
+        ],
       },
     }],
   })
@@ -91,25 +94,6 @@ resource "aws_iam_role" "lambda_exec_role" {
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
-  ]
-}
-
-resource "aws_iam_role" "event_bridge_role" {
-  name = "event_bridge_role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
-      Principal = {
-        Service = "scheduler.amazonaws.com",
-      },
-    }],
-  })
-
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
     "arn:aws:iam::aws:policy/AmazonEventBridgeSchedulerFullAccess"
   ]
 }
@@ -152,6 +136,6 @@ resource "aws_scheduler_schedule" "lambda_scheduler" {
 
   target {
     arn      = aws_lambda_function.withings_garmin_sync_function.arn
-    role_arn = aws_iam_role.event_bridge_role.arn
+    role_arn = aws_iam_role.lambda_exec_role.arn
   }
 }
