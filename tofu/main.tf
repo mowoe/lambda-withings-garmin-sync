@@ -16,6 +16,16 @@ terraform {
   }
 }
 
+data "external" "git-tag" {
+  program = [
+    "git",
+    "log",
+    "--pretty=format:{ \"sha\": \"%h\" }",
+    "-1",
+    "HEAD"
+  ]
+}
+
 data "aws_ecr_repository" "lambda_image_repo" {
   name = "lambda-withings-garmin-sync"
 }
