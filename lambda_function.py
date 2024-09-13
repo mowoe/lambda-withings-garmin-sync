@@ -4,22 +4,11 @@ from loguru import logger
 from datetime import datetime
 import pytz
 import time
-from garminconnect import (
-    Garmin,
-    GarminConnectAuthenticationError,
-    GarminConnectConnectionError,
-    GarminConnectTooManyRequestsError,
-)
 import pprint
 
-from garmin_stuff import init_api
+from garmin_utils import init_api
 import os
 import boto3
-
-WITHINGS_CLIENT_ID = "79a8c97e4650c3dd4f17ebc91b7c9743870ab35fbe7358b0c17f3576a10e240a"
-WITHINGS_SECRET = "deeb693e72e1fdf9404da7035cb1b85a8a42b37d322ab6fc767ab3fbcbc37db9"
-
-redirect_uri = "http://127.0.0.1?code=value"
 
 def handler(event, context):
     GARMIN_CONNECT_EMAIL = os.environ.get("GARMIN_CONNECT_EMAIL",0)
@@ -28,7 +17,7 @@ def handler(event, context):
         raise ValueError("Essential Garmin Connect environment variables missing.")
 
     s3 = boto3.client('s3')
-    bucket_name = os.getenv('BUCKET_NAME', 'my-lambda-config-bucket')
+    bucket_name = os.getenv('BUCKET_NAME', 'withings-garmin-sync-config-bucket')
     config_file_key = 'withings_config.json'
 
     try:
@@ -57,6 +46,11 @@ def handler(event, context):
     valid_until = withings_config["valid_until"]
 
     if valid_until - 100 < int(time.time()):
+        WITHINGS_CLIENT_ID = os.environ.get("WITHINGS_CLIENT_ID",0)
+        WITHINGS_SECRET = os.environ.get("WITHINGS_SECRET", 0)
+        if not WITHINGS_CLIENT_ID or not WITHINGS_SECRET:
+            raise ValueError("Missing essential withings api environment variables.")
+
         logger.info("Token expired, refreshing")
         resp = requests.post(
             "https://wbsapi.withings.net/v2/oauth2",
