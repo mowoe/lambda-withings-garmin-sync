@@ -9,10 +9,10 @@ terraform {
   required_version = ">= 1.2.0"
 
   backend "s3" {
-    bucket         = "tf-state-bucket-halcyon-decima"
+    bucket         = "tf-state-bucket-withings-garmin-sync"
     key            = "state/terraform.tfstate"
     region         = "eu-central-1"
-    dynamodb_table = "halcyon-decima-terraform"
+    dynamodb_table = "withings-garmin-sync"
   }
 }
 
@@ -71,8 +71,8 @@ resource "aws_iam_role" "lambda_exec_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Action    = "sts:AssumeRole",
-      Effect    = "Allow",
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
       Principal = {
         Service = "lambda.amazonaws.com",
       },
@@ -93,13 +93,13 @@ resource "aws_lambda_function" "withings_garmin_sync_function" {
   timeout       = 900
   environment {
     variables = {
-      GARMIN_CONNECT_EMAIL  = var.garmin_connect_email
+      GARMIN_CONNECT_EMAIL       = var.garmin_connect_email
       GARMIN_CONNECT_PASSWORD    = var.garmin_connect_password
-      WITHINGS_ACCESS_TOKEN = var.withings_access_token
-      WITHINGS_REFRESH_TOKEN = var.withings_refresh_token
+      WITHINGS_ACCESS_TOKEN      = var.withings_access_token
+      WITHINGS_REFRESH_TOKEN     = var.withings_refresh_token
       WITHINGS_TOKEN_VALID_UNTIL = var.withings_token_valid_until
-      WITHINGS_CLIENT_ID = var.withings_client_id
-      WITHINGS_SECRET = var.withings_secret
+      WITHINGS_CLIENT_ID         = var.withings_client_id
+      WITHINGS_SECRET            = var.withings_secret
     }
   }
 }
