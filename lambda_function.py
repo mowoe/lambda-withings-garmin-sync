@@ -22,7 +22,7 @@ def handler(event, context):
 
     try:
         response = s3.get_object(Bucket=bucket_name, Key=config_file_key)
-        config_content = json.loads(response['Body'].read().decode('utf-8'))
+        withings_config = json.loads(response['Body'].read().decode('utf-8'))
     except s3.exceptions.NoSuchKey:
         logger.warning("This seems to be the first run, writing environment variables to config.json...")
 
