@@ -62,7 +62,6 @@ variable "withings_secret" {
 
 resource "aws_s3_bucket" "lambda_bucket" {
   bucket = "withings-garmin-sync-config-bucket"
-  acl    = "private"
 }
 
 resource "aws_iam_role" "lambda_exec_role" {
