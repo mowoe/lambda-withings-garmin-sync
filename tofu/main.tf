@@ -95,7 +95,7 @@ resource "aws_iam_role" "lambda_exec_role" {
 }
 
 resource "aws_iam_role" "event_bridge_role" {
-  name = "lambda_exec_role"
+  name = "event_bridge_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
