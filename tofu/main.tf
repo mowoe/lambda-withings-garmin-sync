@@ -120,3 +120,19 @@ resource "aws_lambda_permission" "allow_s3" {
   function_name = aws_lambda_function.withings_garmin_sync_function.function_name
   principal     = "s3.amazonaws.com"
 }
+
+resource "aws_scheduler_schedule" "lambda_scheduler" {
+  name       = "schedule_garmin_withings_sync"
+  group_name = "default"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  schedule_expression = "rate(10 minutes)"
+
+  target {
+    arn      = aws_lambda_function.withings_garmin_sync_function.arn
+    role_arn = aws_iam_role.lambda_exec_role.arn
+  }
+}
