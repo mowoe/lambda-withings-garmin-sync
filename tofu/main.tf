@@ -100,6 +100,7 @@ resource "aws_lambda_function" "withings_garmin_sync_function" {
   handler       = "lambda_function.lambda_handler"
   image_uri     = "${data.aws_ecr_repository.lambda_image_repo.repository_url}:${data.external.git-tag.result.sha}"
   timeout       = 900
+  package_type  = "Image"
   environment {
     variables = {
       GARMIN_CONNECT_EMAIL       = var.garmin_connect_email
