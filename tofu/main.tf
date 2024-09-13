@@ -124,6 +124,12 @@ resource "aws_lambda_permission" "allow_s3" {
   principal     = "s3.amazonaws.com"
 }
 
+resource "aws_lambda_permission" "allow_scheduler" {
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.withings_garmin_sync_function.function_name
+  principal     = "scheduler.amazonaws.com"
+}
+
 resource "aws_scheduler_schedule" "lambda_scheduler" {
   name       = "schedule_garmin_withings_sync"
   group_name = "default"
