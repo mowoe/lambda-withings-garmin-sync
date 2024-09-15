@@ -152,7 +152,7 @@ resource "aws_scheduler_schedule" "lambda_scheduler" {
     arn      = aws_lambda_function.withings_garmin_sync_function.arn
     role_arn = aws_iam_role.lambda_exec_role.arn
   
-    dead_letter_config = {
+    dead_letter_config {
         arn = aws_sqs_queue.scheduler-dlq.arn
     }
  }
