@@ -101,6 +101,47 @@ resource "aws_iam_role" "lambda_exec_role" {
   ]
 }
 
+resource "aws_iam_policy" "scheduler_policy" {
+  name = "scheduler_policy"
+
+  policy = jsonencode(
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "VisualEditor0",
+                "Effect": "Allow",
+                "Action": [
+                    "events:putEvents",
+                    "sqs:SendMessage"
+                ],
+                "Resource": "*"
+            }
+        ]
+    }
+  )
+}
+
+resource "aws_iam_role" "scheduler-role" {
+  name = "scheduler-role"
+  managed_policy_arns = [aws_iam_policy.scheduler_policy.arn]
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "scheduler.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+
 resource "aws_lambda_function" "withings_garmin_sync_function" {
   function_name = "withings_garmin_sync_function"
   role          = aws_iam_role.lambda_exec_role.arn
@@ -149,7 +190,7 @@ resource "aws_scheduler_schedule" "lambda_scheduler" {
 
   target {
     arn      = aws_lambda_function.withings_garmin_sync_function.arn
-    role_arn = aws_iam_role.lambda_exec_role.arn
+    role_arn = aws_iam_role.scheduler-role.arn
 
     dead_letter_config {
       arn = aws_sqs_queue.scheduler-dlq.arn
