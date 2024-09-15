@@ -80,7 +80,7 @@ resource "aws_iam_role" "lambda_exec_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Action: [
+      Action : [
         "events:putEvents",
         "sts:AssumeRole",
         "sqs:SendMessage"
@@ -151,9 +151,9 @@ resource "aws_scheduler_schedule" "lambda_scheduler" {
   target {
     arn      = aws_lambda_function.withings_garmin_sync_function.arn
     role_arn = aws_iam_role.lambda_exec_role.arn
-  
+
     dead_letter_config {
-        arn = aws_sqs_queue.scheduler-dlq.arn
+      arn = aws_sqs_queue.scheduler-dlq.arn
     }
- }
+  }
 }
