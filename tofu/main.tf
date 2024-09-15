@@ -80,7 +80,11 @@ resource "aws_iam_role" "lambda_exec_role" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Action = "sts:AssumeRole",
+      Action: [
+        "events:putEvents",
+        "sts:AssumeRole",
+        "sqs:SendMessage"
+      ]
       Effect = "Allow",
       Principal = {
         Service = [
@@ -130,6 +134,10 @@ resource "aws_lambda_permission" "allow_scheduler" {
   principal     = "scheduler.amazonaws.com"
 }
 
+resource "aws_sqs_queue" "scheduler-dlq" {
+  name = "scheduler-dlq"
+}
+
 resource "aws_scheduler_schedule" "lambda_scheduler" {
   name       = "schedule_garmin_withings_sync"
   group_name = "default"
@@ -143,5 +151,9 @@ resource "aws_scheduler_schedule" "lambda_scheduler" {
   target {
     arn      = aws_lambda_function.withings_garmin_sync_function.arn
     role_arn = aws_iam_role.lambda_exec_role.arn
-  }
+  
+    dead_letter_config = {
+        arn = aws_sqs_queue.scheduler-dlq.arn
+    }
+ }
 }
