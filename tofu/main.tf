@@ -113,7 +113,8 @@ resource "aws_iam_policy" "scheduler_policy" {
                 "Effect": "Allow",
                 "Action": [
                     "events:putEvents",
-                    "sqs:SendMessage"
+                    "sqs:SendMessage",
+                    "lambda:InvokeFunction"
                 ],
                 "Resource": "*"
             }
