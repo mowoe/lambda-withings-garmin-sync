@@ -30,11 +30,6 @@ data "aws_ecr_repository" "lambda_image_repo" {
   name = "lambda-withings-garmin-sync"
 }
 
-data "aws_ecr_image" "lambda_image" {
-  repository_name = "lambda-withings-garmin-sync"
-  most_recent     = true
-}
-
 variable "garmin_connect_email" {
   type      = string
   sensitive = true
@@ -187,7 +182,7 @@ resource "aws_scheduler_schedule" "lambda_scheduler" {
     mode = "OFF"
   }
 
-  schedule_expression = "rate(10 minutes)"
+  schedule_expression = "rate(60 minutes)"
 
   target {
     arn      = aws_lambda_function.withings_garmin_sync_function.arn
