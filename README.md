@@ -6,16 +6,16 @@
 This repository contains an automated way to synchronize withings health data from a scale with Garmin Connect automatically.
 It does this by deploying an AWS Lambda function which is triggered by a cron schedule every 60 minutes. The lambda function is deployed automatically using [OpenTofu](https://opentofu.org/).
 
-## How to use
+## How to Use
 
 First, fork this repository and clone it to your machine.
 
-### Prepare OpenTofu S3 backend
+### Prepare OpenTofu S3 Backend
 
 We will use the S3 backend to store the OpenTofu state. This will include a DynamoDB table for state locking. 
 To do that, we need to create a bucket called `tf-state-bucket-withings-garmin-sync` and a DynamoDB table called `withings-garmin-sync` (partition key `LockID`) manually. Of course you can name them something else and replace the names in `tofu/main.tf`.
 
-### Create a Withings developer account
+### Create a Withings Developer Account
 
 Visit [https://developer.withings.com/dashboard/](https://developer.withings.com/dashboard/) and sign up for a developer account with withings (it's free). Create an application and select "Public API Integration" as the type of integration.
 The application name as well as its description don't matter. Be sure to select "Development" as the target environment and set `http://127.0.0.1` as the primary registered OAuth callback url. 
@@ -49,7 +49,12 @@ The script, packaged as an image, is deployed using OpenTofu. To do this, it nee
 
 After you have set all the environment variables, you can trigger the github action by hand which should build the image, push it and create all tofu resources.
 
-## Cost to operate
+## How It Works
+
+A simple python script requests all measurements from your withings account. After checking which measurements are already present in your garmin connect account, it adds the missing ones, checking for rough plausibility of the measurements (withings weight measurements seem to be off by a factor of 100 sometimes). This script is packaged as an OCI image and deployed to an AWS Lambda function. This function is triggered by an AWS Scheduler schedule (currently set to every 60 minutes). A DLQ is configured to capture failed invocation attempts. Lambda logs are automatically ingested into CloudWatch where they can be investigated further.
+All of this is deployed automatically via OpenTofu in a GitHub Action workflow. 
+
+## Cost to Operate
 
 Almost all used AWS resources are covered by the always-free tier (assuming that you haven't exhausted it yet with other projects). The only exception is the Elastic Container Registry, which has a cost of around __40 cents/month__ with our usage. You can decrease it further by adding automatic cleanup policies to the repository. 
 
