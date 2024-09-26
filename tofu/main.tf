@@ -101,25 +101,25 @@ resource "aws_iam_policy" "scheduler_policy" {
 
   policy = jsonencode(
     {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "VisualEditor0",
-                "Effect": "Allow",
-                "Action": [
-                    "events:putEvents",
-                    "sqs:SendMessage",
-                    "lambda:InvokeFunction"
-                ],
-                "Resource": "*"
-            }
-        ]
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Sid" : "VisualEditor0",
+          "Effect" : "Allow",
+          "Action" : [
+            "events:putEvents",
+            "sqs:SendMessage",
+            "lambda:InvokeFunction"
+          ],
+          "Resource" : "*"
+        }
+      ]
     }
   )
 }
 
 resource "aws_iam_role" "scheduler-role" {
-  name = "scheduler-role"
+  name                = "scheduler-role"
   managed_policy_arns = [aws_iam_policy.scheduler_policy.arn]
 
   assume_role_policy = jsonencode({

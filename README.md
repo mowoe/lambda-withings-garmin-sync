@@ -1,7 +1,10 @@
 # Withings -> GarminConnect Sync via AWS Lambda
 
+> [!IMPORTANT]  
+> This repository was made for a european timezone (and aws region) as well as the metric system. Adapting it to other region should be rather straight forward.
+
 This repository contains an automated way to synchronize withings health data from a scale with Garmin Connect automatically.
-It does this by deploying an AWS Lambda function which is triggered by a cron schedule every 10 minutes. The lambda function is deployed automatically using [OpenTofu](https://opentofu.org/).
+It does this by deploying an AWS Lambda function which is triggered by a cron schedule every 60 minutes. The lambda function is deployed automatically using [OpenTofu](https://opentofu.org/).
 
 ## How to use
 
@@ -46,9 +49,12 @@ The script, packaged as an image, is deployed using OpenTofu. To do this, it nee
 
 After you have set all the environment variables, you can trigger the github action by hand which should build the image, push it and create all tofu resources.
 
-## How it works
-
 ## Cost to operate
+
+Almost all used AWS resources are covered by the always-free tier (assuming that you haven't exhausted it yet with other projects). The only exception is the Elastic Container Registry, which has a cost of around __40 cents/month__ with our usage. You can decrease it further by adding automatic cleanup policies to the repository. 
 
 ## Troubleshooting
 
+All Lambda functions get a CloudWatch Log Stream by default, which you can use to troubleshoot the actual lambda function. If you can't find anything in the logs because the function hasn't run yet, you can trigger it manually.
+
+To troubleshoot the automated trigger, you can take a look at the [DLT](https://en.wikipedia.org/wiki/Dead_letter_queue), which receives events when the trigger mechanism fails.
